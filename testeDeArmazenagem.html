@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Storage</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #fileInput {
+            margin-bottom: 10px;
+        }
+
+        #fileList {
+            list-style: none;
+            padding: 0;
+        }
+
+        .fileItem {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Firebase Storage</h1>
+
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload File</button>
+
+    <ul id="fileList"></ul>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.2/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.2/firebase-storage.js"></script>
+
+    <script>
+        // Substitua as configurações abaixo com as configurações do seu projeto Firebase
+        const firebaseConfig = {
+                apiKey: "AIzaSyAHOPak6BXXz-2CbCTbCI3e1R56l88prCU",
+                authDomain: "jclprojetosenaisop.firebaseapp.com",
+                projectId: "jclprojetosenaisop",
+                storageBucket: "jclprojetosenaisop.appspot.com",
+                messagingSenderId: "870271603946",
+                appId: "1:870271603946:web:3e25cbc285ddda60d47393"
+        };
+
+        // Inicialize o Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Referência ao Firestore
+        const db = firebase.firestore();
+
+        // Referência ao Storage
+        const storage = firebase.storage();
+
+        // Elementos HTML
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+
+        // Função para fazer upload do arquivo
+        function uploadFile() {
+            const file = fileInput.files[0];
+
+            if (file) {
+                // Crie uma referência única para o arquivo no Storage
+                const storageRef = storage.ref().child(file.name);
+
+                // Faça upload do arquivo para o Storage
+                storageRef.put(file).then(snapshot => {
+                    // Adicione um documento ao Firestore com informações sobre o arquivo
+                    db.collection('files').add({
+                        name: file.name,
+                        url: snapshot.metadata.fullPath,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Limpe o campo de entrada de arquivo
+                    fileInput.value = '';
+                });
+            }
+        }
+
+        // Obtenha a lista de arquivos do Firestore
+        db.collection('files').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+            fileList.innerHTML = '';
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+
+                // Crie elementos HTML para cada arquivo
+                const listItem = document.createElement('li');
+                listItem.className = 'fileItem';
+                listItem.innerHTML = `
+                    <strong>${data.name}</strong> - 
+                    <a href="${data.url}" target="_blank">Download</a>
+                `;
+
+                // Adicione o item à lista
+                fileList.appendChild(listItem);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/armazenagemerecuperacao.css">
+    <title>Naruto Word</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@500&family=Nunito+Sans:ital,opsz,wght@1,6..12,500&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Mundo do Naruto</h1>
+
+    <input type="file" id="fileInput">
+    <button onclick="uploadFile()">Upload File</button>
+    <button onclick="displayFiles()">Visualizar Arquivos</button>
+
+    <ul id="fileListContainer"></ul>
+
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-storage.js"></script>
+    <script src="js/armazenamento.js"></script>
+    <script>
+        // Função para exibir os arquivos divididos em grupos de 10
+        function displayFiles() {
+            var fileListContainer = document.getElementById('fileListContainer');
+            fileListContainer.innerHTML = '';
+
+            // Função recursiva para listar arquivos e subpastas
+            function listFilesAndSubfolders(path) {
+                storage.ref(path).listAll().then(result => {
+                    var files = [];
+
+                    result.items.forEach(itemRef => {
+                        // Obter a URL de download do arquivo
+                        itemRef.getDownloadURL().then(url => {
+                            files.push({
+                                name: itemRef.name,
+                                url: url
+                            });
+
+                            // Exibir os arquivos quando todos forem processados
+                            if (files.length === result.items.length) {
+                                // Ordenar os arquivos em ordem alfabética crescente pelo nome
+                                files.sort((a, b) => a.name.localeCompare(b.name));
+
+                                displayFileList(files);
+                            }
+                        });
+                    });
+
+                    // Recursivamente listar subpastas
+                    result.prefixes.forEach(prefix => {
+                        listFilesAndSubfolders(prefix.fullPath);
+                    });
+
+                    // Exibimos os arquivos restantes (menos de 10)
+                    if (files.length > 0) {
+                        displayFileList(files);
+                    }
+                });
+            }
+
+            // Iniciar a listagem da pasta raiz
+            listFilesAndSubfolders('');
+        }
+
+        // Função para exibir a lista de arquivos
+        function displayFileList(files) {
+            var fileListContainer = document.getElementById('fileListContainer');
+            var fileList = document.createElement('ul');
+
+            files.forEach(file => {
+                var listItem = document.createElement('li');
+                listItem.className = 'fileItem';
+                listItem.innerHTML = `
+                    <strong>${file.name}</strong> - 
+                    <a href="${file.url}" target="_blank">Download</a>
+                `;
+                fileList.appendChild(listItem);
+            });
+
+            fileListContainer.appendChild(fileList);
+        }
+    </script>
+
+</body>
+
+</html>

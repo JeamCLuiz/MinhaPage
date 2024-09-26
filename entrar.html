@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/entrar.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@500&family=Nunito+Sans:ital,opsz,wght@1,6..12,500&display=swap"
+        rel="stylesheet">
+</head>
+<body>
+
+    <div class="page">
+        <form id="loginForm" class="formLogin" action="">
+            <h1>Login</h1>
+            <p>Digite os seus dados de acesso no campo abaixo.</p>
+            <label for="email">E-mail</label>
+            <input type="email" id="userEmail" placeholder="Digite seu E-mail" autofocus="true" required>
+            <label for="pass">Senha</label>
+            <input type="password" id="userPassword" placeholder="Digite sua senha" required>
+            <a href="/">Esqueci minha senha</a>
+            <a href="/">Faça seu cadastro</a>
+            <input type="submit" value="Acessar" class="btn">
+        </form>
+
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script> 
+
+    <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-auth.js"></script> 
+
+    <script src="js/entrar.js"></script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/armazenagemerecuperacao.css">
+    <title>Naruto Word</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Inter:wght@500&family=Nunito+Sans:ital,opsz,wght@1,6..12,500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    
+    <div class="header"><!--Cabeçalho-->
+        <h1>Mundo Naruto - Conteúdo Exclusívo</h1>
+    </div>
+
+    <div class="row"><!--Linha-->
+        <div class="col-3 col-s-3 menu"><!--Metodo para aplicação de responsividade sendo dois tipos de tamanho-->
+            <ul><!--Lista não ordenada-->
+                <li><a href="indexAutenticado.html">Home</a></li>
+                <li><a href="armazenagemerecuperacao.html">Vídeos</a></li><!--Itens da lista-->
+                <li>Imagens</li>
+                <li><a href="historiaAutenticada.html">História</a></li>
+                <li>Doações</li>
+            </ul>
+        </div>
+        
+        <div class="col-6 col-s-9">
+            <h1>Area Exclusiva</h1>
+            <h3>Vídeos</h3>
+
+            <input type="file" id="fileInput">
+            <button onclick="uploadFile()">Upload File</button>
+            <button onclick="displayFiles()">Visualizar Arquivos</button>
+        
+            <ul id="fileListContainer"></ul>
+        
+            <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-auth.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/8.2.0/firebase-storage.js"></script>
+            <script src="js/armazenamento.js"></script>
+            <script>
+                // Função para exibir os arquivos divididos em grupos de 10
+                function displayFiles() {
+                    var fileListContainer = document.getElementById('fileListContainer');
+                    fileListContainer.innerHTML = '';
+        
+                    // Função recursiva para listar arquivos e subpastas
+                    function listFilesAndSubfolders(path) {
+                        storage.ref(path).listAll().then(result => {
+                            var files = [];
+        
+                            result.items.forEach(itemRef => {
+                                // Obter a URL de download do arquivo
+                                itemRef.getDownloadURL().then(url => {
+                                    files.push({
+                                        name: itemRef.name,
+                                        url: url
+                                    });
+        
+                                    // Exibir os arquivos quando todos forem processados
+                                    if (files.length === result.items.length) {
+                                        // Ordenar os arquivos em ordem alfabética crescente pelo nome
+                                        files.sort((a, b) => a.name.localeCompare(b.name));
+        
+                                        displayFileList(files);
+                                    }
+                                });
+                            });
+        
+                            // Recursivamente listar subpastas
+                            result.prefixes.forEach(prefix => {
+                                listFilesAndSubfolders(prefix.fullPath);
+                            });
+        
+                            // Exibimos os arquivos restantes (menos de 10)
+                            if (files.length > 0) {
+                                displayFileList(files);
+                            }
+                        });
+                    }
+        
+                    // Iniciar a listagem da pasta raiz
+                    listFilesAndSubfolders('');
+                }
+        
+                // Função para exibir a lista de arquivos
+                function displayFileList(files) {
+                    var fileListContainer = document.getElementById('fileListContainer');
+                    var fileList = document.createElement('ul');
+        
+                    files.forEach(file => {
+                        var listItem = document.createElement('li');
+                        listItem.className = 'fileItem';
+                        listItem.innerHTML = `
+                            <strong>${file.name}</strong> - 
+                            <a href="${file.url}" target="_blank">Download</a>
+                        `;
+                        fileList.appendChild(listItem);
+                    });
+        
+                    fileListContainer.appendChild(fileList);
+                }
+            </script>
+            
+        </div>
+
+        <div class="col-3 col-s-12">
+            <div class="aside">
+                <!-- aside é uma denominação usada para identificar a area onde havera conteudo não relacionados a pagina-->
+                <h2>Momoshiki Otsutsuki</h2>
+                <p>Momoshiki Otsutsuki (大筒木 モモシキ, Ōtsutsuki Momoshiki?) é um personagem fictício, apresentado pela
+                    primeira vez no filme de anime da Pierrot de 2015, Boruto: Naruto the Movie.</p>
+                <h2>Kawaki</h2>
+                <p>Kawaki (カワキ?) é um personagem fictício do mangá Boruto: Naruto Next Generations de Ukyo Kodachi,
+                    Masashi Kishimoto e Mikio Ikemoto.</p>
+                <h2>Zodiaco Chinês</h2>
+                <p>A astrologia chinesa é baseada em ciclos anuais de doze animais, cada um associado a cinco possíveis
+                    elementos (água, madeira, fogo, metal e terra). Kishimoto queria trazer parte dessa tradição para
+                    Naruto por causa de sua grande influência histórica no Japão.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="rodape"><!--Denominação usada para identificar o rodapé da pagina-->
+        <p>&copy;Todos os direitos reservados JCL.</p>
+    </div>
+</body>
+
+</html>

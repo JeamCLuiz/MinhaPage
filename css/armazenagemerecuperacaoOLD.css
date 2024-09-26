@@ -1,0 +1,23 @@
+html {
+    font-family: 'Dancing Script', cursive, sans-serif;
+    background-image: url("../img/folha04.jpg");
+    color: #b63d3d;
+    font-size: 24px;
+}
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+#fileInput {
+    margin-bottom: 10px;
+}
+
+#fileList {
+    list-style: none;
+    padding: 0;
+}
+
+.fileItem {
+    margin-bottom: 5px;
+}
